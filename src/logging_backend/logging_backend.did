@@ -1,0 +1,25 @@
+type OkErrResponse = variant {
+    Ok: text;
+    Err: text;
+};
+
+type LogEntry = record {
+    log_id: text;
+    log_type: nat8;
+    log_origin: text;
+    log_canister: text;   
+    log_message: text;
+    log_data: text;
+    log_timestamp: text;
+}
+
+service : () -> {
+    "log": (nat8, text, text, text) -> (OkErrResponse);
+    "log_inject": (LogEntry) -> (OkErrResponse); 
+    "log_range": (nat64, nat64) -> (vec LogEntry) query;
+    "log_size": () -> (nat64) query;
+    "log_empty": () -> ();
+    "serialize_message": (LogEntry) -> (text) query;
+    "deserialize_message": (text) -> (LogEntry) query;
+}
+

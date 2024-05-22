@@ -1,0 +1,88 @@
+type Message = record {
+    topic: text;
+    value: text;
+};
+
+type InitArgs = record {
+    registry_canister: text;
+};
+
+type Idcache = record {
+    subscribers: vec Subscribers;
+    topic: text;
+    timestamp: nat64;
+};
+
+type Subscribers = record {
+    id: text;
+    canister_id: text;
+    callback: text;
+    name: text;
+    description: text;
+    topic: text;
+    namespace: text;
+    active: bool;
+};
+
+type SubscriberCache = record {
+    id: text;
+    canister_id: text;
+    callback: text;
+    name: text;
+    description: text;
+    topic: text;
+    topic_name: text;
+    namespace: text;
+    active: bool;
+    timestamp: nat64;
+};
+
+type CanisterSettings = record {
+    canister_id: text;
+};
+
+type OkErrResponse = variant {
+    Ok: text;
+    Err: text;
+};
+
+service : () -> {
+    "test": () -> (text) query;
+    "tester": () -> () query;
+    "send_message": () -> ();
+    "test_crossbeam": () -> ();
+    "test_vecdeque": () -> (text);
+
+    "fifo_producer": (Message) -> (OkErrResponse); 
+    "fifo_consumer": () -> ();
+    "fifo_consumer1": () -> (OkErrResponse);
+    "fifo_buffer_size": () -> (nat64) query;
+    "fifo_buffer_empty": () -> ();
+
+    "whitelist_register": (text, text) -> ();
+    "whitelist_unregister": (text, text) -> (OkErrResponse);
+    "whitelist_lookup": (text) -> (vec text) query;
+    "whitelist_canister_check": (text, text) -> (OkErrResponse) query;
+
+    "route_message": (Message) -> ();
+    "route_message_execute": (text) -> (vec text) query;
+
+    "serialize_message": (Message) -> (text) query;
+    "deserialize_message": (text) -> (Message) query;
+
+    "intake": (Message) -> (OkErrResponse);
+
+    "counter" : () -> (nat32) query;
+    "start_with_interval_secs": (nat64) -> ();
+    "stop": () -> ();
+    "cycles_used": () -> (nat64) query;
+
+    "cache_subscribers": (text) -> (vec text) query;
+    "cache_subscriber_data": (text) -> (opt SubscriberCache) query;
+    "cache_subscribers_fetch": () -> ();
+    "cache_subscribers_clear": () -> ();
+
+    "canister_settings_store": (text, text) -> ();
+    "canister_settings_get": (text) -> (opt CanisterSettings) query;
+}
+

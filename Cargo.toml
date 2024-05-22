@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "src/registry_backend",
+    "src/queue_backend",
+    "src/logging_backend",
+    "src/demo_backend",
+]
