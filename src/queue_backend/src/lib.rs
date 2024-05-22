@@ -396,6 +396,11 @@ async fn route_message_execute(canister_id: String, callback: String, val: Strin
 //
 //  CACHE
 //
+//  cache_subscribers           Get topic subscribers
+//  cache_subscriber_data       Get subscriber details
+//  cache_subscribers_fetch     Load subscribers to cache
+//  cache_subscribers_clear     Clear subscriber cache
+//
 /******************************************************/
 
 #[ic_cdk_macros::query]
@@ -423,8 +428,8 @@ async fn cache_subscriber_data(topic_id: String) -> Option<SubscriberCache> {
 #[ic_cdk_macros::update]
 async fn cache_subscribers_fetch() -> () {
     let registry_canister = canister_settings_get("registry_backend".to_string()).unwrap().canister_id;
-    let topics: (Vec<Topics>, ) = ic_cdk::call(Principal::from_text(registry_canister).expect("Could not decode the principal."), "topics", ()).await.unwrap();
-    let subscribers: (Vec<Subscribers>, ) = ic_cdk::call(Principal::from_text(registry_canister).expect("Could not decode the principal."), "subscribers", ()).await.unwrap();
+    let topics: (Vec<Topics>, ) = ic_cdk::call(Principal::from_text(registry_canister.clone()).expect("Could not decode the principal."), "topics", ()).await.unwrap();
+    let subscribers: (Vec<Subscribers>, ) = ic_cdk::call(Principal::from_text(registry_canister.clone()).expect("Could not decode the principal."), "subscribers", ()).await.unwrap();
     let mut ids: Vec<String> = Vec::new();
 
     for i in subscribers.0.iter() {
@@ -483,7 +488,10 @@ fn cache_subscribers_clear() -> () {
 
 /******************************************************/
 //
-//  CACHE
+//  CANISTER SETTINGS
+//
+//  canister_settings_store Canister settings are pushed to this function
+//  canister_settings_get   Get the canister ID of a canister
 //
 /******************************************************/
 
